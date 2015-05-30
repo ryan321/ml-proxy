@@ -264,14 +264,14 @@ var mlProxy = function() {
             req.session.mlSessionId = mlSessionId;
             console.log('cookie: ' + util.inspect(response.headers['set-cookie']));
             req.session.user = {
-              name: req.query.username
+              name: proxyOptions.username
             };
 
             console.log('logged in with session id: ' + req.session.mlSessionId);
 
             res.send(200, {
               authenticated: true,
-              username: req.query.username
+              username: proxyOptions.username
             });
           }
         }
