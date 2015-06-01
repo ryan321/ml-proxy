@@ -87,10 +87,62 @@ var mlProxy = function() {
 
       var mlReq = null;
 
+      var handleMlCookie = function(req, response) {
+        var cookies = response.headers['set-cookie'];
+        console.log('cookie: ' + util.inspect(response.headers['set-cookie']));
+
+        var mlSessionCookie = null;
+        if (typeof cookies === 'string') {
+          mlSessionCookie = cookies;
+        }
+        else if (typeof cookies === 'object') {
+          for (var mlSessionCookieI = 0; mlSessionCookieI < cookies.length; mlSessionCookieI++) {
+            var curCookie = cookies[mlSessionCookieI];
+            if (curCookie.indexOf(mlSessionCookieName) > -1) {
+              mlSessionCookie = curCookie;
+              break;
+            }
+          }
+        }
+
+        console.log('mlSessionCookie: ' + mlSessionCookie);
+        var mlSessionId = null;
+
+        try {
+          mlSessionId = mlSessionCookie.split(';')[0].split('=')[1];
+        }
+        catch(err) {}
+
+        console.log('mlSessionId: ' + mlSessionId);
+
+        var username = undefined;
+        if (proxyOptions.username) {
+          username = proxyOptions.username;
+        }
+        else if (body['rs:username']) {
+          username = body['rs:username'];
+        }
+        else if (body['username']) {
+          username = body['username'];
+        }
+        console.log('username: ' + username);
+
+        req.session.mlSessionId = mlSessionId;
+
+        req.session.user = {
+          name: username
+        };
+      }
+
+
       var defaultResponseHandler = function(response) {
 
         //console.log('mlReq: ' + util.inspect(mlReq));
         //console.log('response: ' + util.inspect(response));
+
+        if (usingCookies) {
+          handleMlCookie(req, response);
+        }
 
         if (response.headers.location) {
           res.header('location', response.headers.location);
@@ -238,34 +290,7 @@ var mlProxy = function() {
         } else {
           if (response.statusCode === 200) {
             // authentication successful, remember the session id from MarkLogic
-            var cookies = response.headers['set-cookie'];
-            var mlSessionCookie = null;
-            if (typeof cookies === 'string') {
-              mlSessionCookie = cookies;
-            }
-            else if (typeof cookies === 'object') {
-              for (var mlSessionCookieI = 0; mlSessionCookieI < cookies.length; mlSessionCookieI++) {
-                var curCookie = cookies[mlSessionCookieI];
-                if (curCookie.indexOf(mlSessionCookieName) > -1) {
-                  mlSessionCookie = curCookie;
-                  break;
-                }
-              }
-            }
-
-            console.log('mlSessionCookie: ' + mlSessionCookie);
-            var mlSessionId = null;
-
-            try {
-              mlSessionId = mlSessionCookie.split(';')[0].split('=')[1];
-            }
-            catch(err) {}
-
-            req.session.mlSessionId = mlSessionId;
-            console.log('cookie: ' + util.inspect(response.headers['set-cookie']));
-            req.session.user = {
-              name: proxyOptions.username
-            };
+            handleMlCookie(req, response);
 
             console.log('logged in with session id: ' + req.session.mlSessionId);
 
