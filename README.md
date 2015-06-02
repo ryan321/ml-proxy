@@ -3,7 +3,7 @@ Node proxy code for calling MarkLogic endpoints. Supports using cookies or basic
 
 ## Usage
 - use `require` to load the module
-- call the `init` function to set parameters (authMethod can either be 'cookie' or 'basic'
+- call the `init` function to set parameters (authMethod can either be 'cookie' or 'basic')
 - call `proxy` object and optionally override:
     - path
     - method
