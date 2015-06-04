@@ -72,11 +72,17 @@ var mlProxy = function() {
       }
       console.log('username: ' + username);
 
-      req.session.mlSessionId = mlSessionId;
+      if (mlSessionId) {
+        req.session.mlSessionId = mlSessionId;
+      }
 
-      req.session.user = {
-        name: username
-      };
+      if (username) {
+        req.session.user = {
+          name: username
+        };
+      }
+
+      console.log('session is now: ' + util.inspect(req.session));
     };
 
     var proxy = function(req, res, proxyOptions, callback) {
@@ -297,10 +303,10 @@ var mlProxy = function() {
 
             console.log('logged in with session id: ' + req.session.mlSessionId);
 
-            res.send(200, {
+            res.status(200).send({
               authenticated: true,
               username: proxyOptions.username
-            });
+            })
           }
         }
       });
