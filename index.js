@@ -36,6 +36,10 @@ var mlProxy = function() {
       var cookies = response.headers['set-cookie'];
       console.log('cookie: ' + util.inspect(response.headers['set-cookie']));
 
+      if (cookies === null || cookies === undefined) {
+        return;
+      }
+
       var mlSessionCookie = null;
       if (typeof cookies === 'string') {
         mlSessionCookie = cookies;
@@ -48,6 +52,10 @@ var mlProxy = function() {
             break;
           }
         }
+      }
+
+      if (mlSessionCookie === null || mlSessionCookie === undefined) {
+        return;
       }
 
       console.log('mlSessionCookie: ' + mlSessionCookie);
@@ -165,8 +173,7 @@ var mlProxy = function() {
           });
         }
         else {
-          res.statusCode = response.statusCode;
-          res.send('error');
+          res.status(response.statusCode).send('error');
         }
       };
 
@@ -242,7 +249,7 @@ var mlProxy = function() {
             name: proxyOptions.username,
             password: proxyOptions.password
           };
-          res.send(200, {
+          res.status(200).send({
             authenticated: true,
             username: proxyOptions.username
           });
@@ -260,7 +267,7 @@ var mlProxy = function() {
                   fullname: json.user.fullname,
                   emails: json.user.emails
                 };
-                res.send(200, {
+                res.status(200).send({
                   authenticated: true,
                   username: proxyOptions.username,
                   profile: req.session.user.profile
@@ -293,8 +300,7 @@ var mlProxy = function() {
       function(response) {
         //console.log('response: ' + util.inspect(response));
         if (response.statusCode === 403) {
-          res.statusCode = 403;
-          res.send('Unauthenticated');
+          res.status(403).send('Unauthenticated');
         } else {
           if (response.statusCode === 200) {
             // authentication successful, remember the session id from MarkLogic
@@ -317,7 +323,7 @@ var mlProxy = function() {
     }
 
     var proxyBasicLogout = function(req, res, proxyOptions, callback) {
-      res.send(200);
+      res.status(200).send();
     };
 
     var proxyCookieLogout = function(req, res, proxyOptions, callback) {
@@ -329,7 +335,7 @@ var mlProxy = function() {
         path: path
       },
       function(response) {
-        res.send(200);
+        res.status(200).send();
       });
 
     };
