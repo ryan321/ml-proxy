@@ -82,7 +82,6 @@ var mlProxy = function() {
         };
       }
 
-      console.log('session is now: ' + util.inspect(req.session));
     };
 
     var proxy = function(req, res, proxyOptions, callback) {
