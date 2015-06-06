@@ -100,7 +100,7 @@ var mlProxy = function() {
       var addRsToParamNames = proxyOptions.addRsToParamNames ? proxyOptions.addRsToParamNames : false;
       var body              = proxyOptions.body ? proxyOptions.body : req.body;
       var method            = (proxyOptions.method ? proxyOptions.method : req.method).toUpperCase();
-      var headers           = req.headers;
+      var headers           = proxyOptions.headers ? proxyOptions.headers : req.headers;
 
       // add rs: to url param names for ml rest api
       if (addRsToParamNames) {
