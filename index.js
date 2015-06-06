@@ -4,7 +4,7 @@ var util = require('util');
 
 function buildMlCookieHeader(mlSessionCookieName, mlSessionId) {
   console.log('buildMlCookieHeader: ' + mlSessionCookieName + '=' + mlSessionId + ';');
-  return mlSessionCookieName + '=' + mlSessionId + '; ';
+  return mlSessionCookieName + '=' + mlSessionId;
 }
 
 function buildBasicAuth(options, session) {
@@ -188,7 +188,7 @@ var mlProxy = function() {
 
       var responseHandler = callback ? callback : defaultResponseHandler;
 
-      if (method === 'POST' || method.toLowerCase() === 'PUT') {
+      if (method.toUpperCase() === 'POST' || method.toUpperCase() === 'PUT') {
         mlReq = http.post({
           hostname: options.mlHost,
           port: options.mlPort,
@@ -311,6 +311,11 @@ var mlProxy = function() {
             res.status(200).send({
               authenticated: true,
               username: proxyOptions.username
+            })
+          }
+          else {
+            res.status(401).send({
+              authenticated: false
             })
           }
         }
