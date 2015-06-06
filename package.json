@@ -1,6 +1,6 @@
 {
   "name": "ml-proxy",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Proxy code for calling MarkLogic endpoints. Supports using cookies or basic authentication with the MarkLogic REST API.",
   "main": "index.js",
   "keywords": [
